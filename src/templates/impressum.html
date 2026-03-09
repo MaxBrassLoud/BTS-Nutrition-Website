@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Impressum — BTS Nutrition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/"><span>BTS</span> Nutrition<small>BrewTein Sport Nutrition</small></a>
+  <ul class="nav-links">
+    <li><a href="/">Shop</a></li><li><a href="/about">Über uns</a></li><li><a href="/blog">Blog</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="/cart" class="nav-cart">🛒 Warenkorb <span class="cart-count" id="cartCount">0</span></a>
+    <button class="nav-hamburger" onclick="openMobileNav()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="closeMobileNav()">✕</button>
+  <a href="/">Shop</a><a href="/about">Über uns</a><a href="/blog">Blog</a><a href="/cart">Warenkorb</a>
+</div>
+
+<section class="legal-page">
+  <div class="legal-content">
+    <div class="section-label">Rechtliches</div>
+    <h1 style="font-family:var(--font-display);font-size:clamp(3rem,7vw,5rem);margin-bottom:2rem">IMPRESSUM</h1>
+
+    <div class="legal-nav">
+      <a href="/impressum" class="active">Impressum</a>
+      <a href="/datenschutz">Datenschutz</a>
+      <a href="/agb">AGB</a>
+    </div>
+
+    <h2>Angaben gemäß § 5 TMG</h2>
+    <p>BTS Nutrition GmbH<br>BrewTein Sport Nutrition<br>Musterstraße 42<br>80331 München<br>Deutschland</p>
+
+    <h2>Kontakt</h2>
+    <p>Telefon: +49 (0) 89 123 456 789<br>
+    E-Mail: <a href="mailto:info@bts-nutrition.de">info@bts-nutrition.de</a><br>
+    Web: <a href="/">www.bts-nutrition.de</a></p>
+
+    <h2>Handelsregister</h2>
+    <p>Amtsgericht München<br>HRB 123456<br>Umsatzsteuer-ID: DE123456789</p>
+
+    <h2>Geschäftsführer</h2>
+    <p>Dr. Max Bremer, Sarah König</p>
+
+    <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+    <p>Dr. Max Bremer<br>Musterstraße 42<br>80331 München</p>
+
+    <h2>Streitschlichtung</h2>
+    <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank">https://ec.europa.eu/consumers/odr/</a></p>
+    <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+
+    <h2>Haftung für Inhalte</h2>
+    <p>Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.</p>
+
+    <h2>Urheberrecht</h2>
+    <p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">
+    <span class="logo"><span>BTS</span> Nutrition</span>
+    <span class="logo-sub">BrewTein Sport Nutrition</span>
+    <p>Premium Sports Nutrition für ambitionierte Athleten.</p>
+  </div>
+  <div class="footer-col"><h4>Shop</h4><ul><li><a href="/">Alle Produkte</a></li></ul></div>
+  <div class="footer-col"><h4>Info</h4><ul><li><a href="/about">Über uns</a></li><li><a href="/blog">Blog</a></li></ul></div>
+  <div class="footer-col"><h4>Legal</h4><ul><li><a href="/impressum">Impressum</a></li><li><a href="/datenschutz">Datenschutz</a></li><li><a href="/agb">AGB</a></li></ul></div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2025 BTS Nutrition – BrewTein Sport Nutrition GmbH</span>
+  <div class="footer-bottom-links"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/agb">AGB</a></div>
+</div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

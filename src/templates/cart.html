@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Warenkorb — BTS Nutrition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/"><span>BTS</span> Nutrition<small>BrewTein Sport Nutrition</small></a>
+  <ul class="nav-links">
+    <li><a href="/">Shop</a></li><li><a href="/about">Über uns</a></li><li><a href="/blog">Blog</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="/cart" class="nav-cart">🛒 Warenkorb <span class="cart-count" id="cartCount">0</span></a>
+    <button class="nav-hamburger" onclick="openMobileNav()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="closeMobileNav()">✕</button>
+  <a href="/">Shop</a><a href="/about">Über uns</a><a href="/blog">Blog</a><a href="/cart">Warenkorb</a>
+</div>
+
+<div class="page-header">
+  <div class="page-header-bg"></div>
+  <div class="page-header-content">
+    <div class="section-label">Mein Einkauf</div>
+    <h1>WARENKORB</h1>
+    <p>Überprüfe deine Auswahl und schließe deine Bestellung ab.</p>
+  </div>
+</div>
+
+<section class="cart-page">
+  <div class="cart-grid">
+    <div id="cartItems"></div>
+    <div id="cartSummary" class="cart-summary">
+      <h3>Bestellübersicht</h3>
+      <div class="summary-row"><span>Zwischensumme</span><span id="summarySubtotal">0,00€</span></div>
+      <div class="summary-row"><span>Versand</span><span id="summaryShipping">4,99€</span></div>
+      <div class="summary-row" style="font-size:.75rem;color:var(--green)"><span>Ab 50€ versandkostenfrei</span></div>
+      <div class="summary-row total"><span>Gesamt</span><span id="summaryTotal">0,00€</span></div>
+      <button class="btn-primary" style="width:100%;justify-content:center;margin-top:1.5rem;padding:1rem" onclick="showToast('🚀 Checkout kommt bald!')">
+        Zur Kasse →
+      </button>
+      <a href="/" class="btn-ghost" style="width:100%;justify-content:center;margin-top:0.75rem;padding:0.8rem">← Weiter shoppen</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">
+    <span class="logo"><span>BTS</span> Nutrition</span>
+    <span class="logo-sub">BrewTein Sport Nutrition</span>
+    <p>Premium Sports Nutrition für ambitionierte Athleten.</p>
+  </div>
+  <div class="footer-col"><h4>Shop</h4><ul><li><a href="/">Alle Produkte</a></li></ul></div>
+  <div class="footer-col"><h4>Info</h4><ul><li><a href="/about">Über uns</a></li><li><a href="/blog">Blog</a></li></ul></div>
+  <div class="footer-col"><h4>Legal</h4><ul><li><a href="/impressum">Impressum</a></li><li><a href="/datenschutz">Datenschutz</a></li><li><a href="/agb">AGB</a></li></ul></div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2025 BTS Nutrition – BrewTein Sport Nutrition GmbH</span>
+  <div class="footer-bottom-links"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/agb">AGB</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+</body>
+</html>

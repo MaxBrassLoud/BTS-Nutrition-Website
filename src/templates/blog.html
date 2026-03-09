@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Blog — BTS Nutrition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/"><span>BTS</span> Nutrition<small>BrewTein Sport Nutrition</small></a>
+  <ul class="nav-links">
+    <li><a href="/">Shop</a></li>
+    <li><a href="/about">Über uns</a></li>
+    <li><a href="/blog" class="active">Blog</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="/cart" class="nav-cart">🛒 Warenkorb <span class="cart-count" id="cartCount">0</span></a>
+    <button class="nav-hamburger" onclick="openMobileNav()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="closeMobileNav()">✕</button>
+  <a href="/">Shop</a><a href="/about">Über uns</a><a href="/blog">Blog</a><a href="/cart">Warenkorb</a>
+</div>
+
+<div class="page-header">
+  <div class="page-header-bg"></div>
+  <div class="page-header-content">
+    <div class="section-label">Wissen & Tipps</div>
+    <h1>BTS <span style="color:var(--accent)">BLOG</span></h1>
+    <p>Wissenschaftlich fundierte Artikel zu Training, Ernährung und Supplementation. {{ posts|length }} Artikel verfügbar.</p>
+  </div>
+</div>
+
+<section class="blog-page" style="padding-top:3rem">
+
+  {% if featured %}
+  <!-- ── FEATURED ── -->
+  <div style="max-width:1100px;margin:0 auto 4rem">
+    <div class="section-label">Featured</div>
+    <a class="blog-featured fade-up" href="/blog/{{ featured.id }}">
+      <div class="blog-featured-img">
+        <span class="blog-featured-emoji">{{ featured.emoji }}</span>
+        <span class="blog-card-cat" style="background:{{ featured.category_color }}; color:{% if featured.category_color == '#e8ff00' or featured.category_color == '#00e5b0' %}#000{% else %}#fff{% endif %}">{{ featured.category }}</span>
+      </div>
+      <div class="blog-featured-body">
+        <div class="blog-featured-meta">
+          <span class="blog-card-date">{{ featured.date_display }}</span>
+          <span class="blog-read-time">· {{ featured.read_time }} Lesezeit</span>
+        </div>
+        <h2 class="blog-featured-title">{{ featured.title }}</h2>
+        <p class="blog-featured-excerpt">{{ featured.excerpt }}</p>
+        <div class="blog-featured-author">
+          <span class="blog-author-avatar">{{ featured.author[0] }}</span>
+          <div>
+            <span class="blog-author-name">{{ featured.author }}</span>
+            <span class="blog-author-role">{{ featured.author_role }}</span>
+          </div>
+        </div>
+        <div class="blog-card-read">Artikel lesen →</div>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+
+  <!-- ── ALL POSTS ── -->
+  {% if rest %}
+  <div style="max-width:1100px;margin:0 auto">
+    <div class="section-label">Alle Artikel</div>
+    <div class="blog-grid" style="margin-top:1.5rem">
+      {% for post in rest %}
+      <a class="blog-card fade-up" href="/blog/{{ post.id }}" style="animation-delay:{{ loop.index0 * 0.07 }}s">
+        <div class="blog-card-img">
+          {{ post.emoji }}
+          <span class="blog-card-cat" style="background:{{ post.category_color }};color:{% if post.category_color == '#e8ff00' or post.category_color == '#00e5b0' %}#000{% else %}#fff{% endif %}">{{ post.category }}</span>
+        </div>
+        <div class="blog-card-body">
+          <div class="blog-card-date">{{ post.date_display }} · {{ post.read_time }}</div>
+          <div class="blog-card-title">{{ post.title }}</div>
+          <p class="blog-card-excerpt">{{ post.excerpt }}</p>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:1rem">
+            <div style="display:flex;align-items:center;gap:.5rem">
+              <span style="width:24px;height:24px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700">{{ post.author[0] }}</span>
+              <span style="font-family:var(--font-mono);font-size:.6rem;letter-spacing:.08em;color:var(--muted)">{{ post.author }}</span>
+            </div>
+            <div class="blog-card-read">Lesen →</div>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if not posts %}
+  <div style="text-align:center;padding:5rem 2rem;color:var(--muted)">
+    <div style="font-size:3rem;margin-bottom:1rem;opacity:.3">📝</div>
+    <p style="font-family:var(--font-mono);font-size:.8rem;letter-spacing:.1em">Noch keine Artikel vorhanden.<br>Lege eine JSON-Datei in den <code>blog/</code> Ordner.</p>
+  </div>
+  {% endif %}
+
+</section>
+
+<footer>
+  <div class="footer-brand">
+    <span class="logo"><span>BTS</span> Nutrition</span>
+    <span class="logo-sub">BrewTein Sport Nutrition</span>
+    <p>Premium Sports Nutrition für ambitionierte Athleten.</p>
+  </div>
+  <div class="footer-col"><h4>Shop</h4><ul><li><a href="/">Alle Produkte</a></li></ul></div>
+  <div class="footer-col"><h4>Info</h4><ul><li><a href="/about">Über uns</a></li><li><a href="/blog">Blog</a></li></ul></div>
+  <div class="footer-col"><h4>Legal</h4><ul><li><a href="/impressum">Impressum</a></li><li><a href="/datenschutz">Datenschutz</a></li><li><a href="/agb">AGB</a></li></ul></div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2025 BTS Nutrition – BrewTein Sport Nutrition GmbH</span>
+  <div class="footer-bottom-links"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/agb">AGB</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

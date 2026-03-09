@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>429 — Zu viele Anfragen · BTS Nutrition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <style>
+    .error-page {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem; position: relative; overflow: hidden; text-align: center;
+    }
+    .error-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0,229,176,0.06) 0%, transparent 60%);
+    }
+    .error-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .error-content { position: relative; z-index: 1; max-width: 560px; }
+    .error-code {
+      font-family: var(--font-display);
+      font-size: clamp(8rem, 20vw, 16rem);
+      line-height: 0.85; letter-spacing: 0.04em;
+      color: transparent;
+      -webkit-text-stroke: 2px rgba(0,229,176,0.25);
+      margin-bottom: 1rem; display: block;
+      animation: fadeUp 0.7s ease forwards;
+    }
+    .error-label {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--green); margin-bottom: 1rem;
+      display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    .error-label::before, .error-label::after {
+      content: ''; width: 30px; height: 1px; background: var(--green);
+    }
+    .error-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      letter-spacing: 0.02em; margin-bottom: 1rem;
+      animation: fadeUp 0.7s 0.15s ease both;
+    }
+    .error-desc {
+      font-size: 1rem; line-height: 1.75; color: var(--muted);
+      margin-bottom: 2.5rem;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+    .error-actions {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp 0.7s 0.25s ease both;
+    }
+    .countdown-box {
+      margin-top: 2rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.25rem 2rem;
+      display: inline-block;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+    .countdown-num {
+      font-family: var(--font-display); font-size: 3rem;
+      color: var(--green); display: block; line-height: 1;
+    }
+    .countdown-label {
+      font-family: var(--font-mono); font-size: 0.62rem;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    }
+    .error-emoji { font-size: 4rem; margin-bottom: 1.5rem; display: block; animation: fadeUp 0.6s ease both; }
+  </style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/"><span>BTS</span> Nutrition<small>BrewTein Sport Nutrition</small></a>
+  <ul class="nav-links">
+    <li><a href="/">Shop</a></li><li><a href="/about">Über uns</a></li><li><a href="/blog">Blog</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="/cart" class="nav-cart">🛒 Warenkorb <span class="cart-count" id="cartCount">0</span></a>
+    <button class="nav-hamburger" onclick="openMobileNav()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="closeMobileNav()">✕</button>
+  <a href="/">Shop</a><a href="/about">Über uns</a><a href="/blog">Blog</a><a href="/cart">Warenkorb</a>
+</div>
+
+<div class="error-page">
+  <div class="error-bg"></div>
+  <div class="error-grid"></div>
+  <div class="error-content">
+    <span class="error-emoji">⏱️</span>
+    <span class="error-code">429</span>
+    <div class="error-label">Zu viele Anfragen</div>
+    <h1 class="error-title">Kurze Pause einlegen</h1>
+    <p class="error-desc">
+      Du hast in kurzer Zeit zu viele Anfragen gesendet.
+      Warte einen Moment und versuche es dann erneut.
+    </p>
+    <div class="error-actions">
+      <a href="/" class="btn-primary">← Zum Shop</a>
+    </div>
+    <div class="countdown-box">
+      <span class="countdown-num" id="countdownNum">30</span>
+      <span class="countdown-label">Sekunden bis zur Weiterleitung</span>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  let seconds = 30;
+  const el = document.getElementById('countdownNum');
+  const timer = setInterval(() => {
+    seconds--;
+    if (el) el.textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(timer);
+      window.location.href = '/';
+    }
+  }, 1000);
+</script>
+</body>
+</html>

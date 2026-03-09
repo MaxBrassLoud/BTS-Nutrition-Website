@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>{{ product.name }} — BTS Nutrition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/"><span>BTS</span> Nutrition<small>BrewTein Sport Nutrition</small></a>
+  <ul class="nav-links">
+    <li><a href="/">Shop</a></li><li><a href="/about">Über uns</a></li><li><a href="/blog">Blog</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="/cart" class="nav-cart">🛒 Warenkorb <span class="cart-count" id="cartCount">0</span></a>
+    <button class="nav-hamburger" onclick="openMobileNav()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="closeMobileNav()">✕</button>
+  <a href="/">Shop</a><a href="/about">Über uns</a><a href="/blog">Blog</a><a href="/cart">Warenkorb</a>
+</div>
+
+<section class="product-detail">
+  <!-- Breadcrumb -->
+  <p style="font-family:var(--font-mono);font-size:0.65rem;letter-spacing:0.1em;color:var(--muted);margin-bottom:2.5rem;padding-top:0.5rem">
+    <a href="/" style="color:var(--muted);text-decoration:none">Shop</a>
+    <span style="margin:0 0.5rem">›</span>
+    <span style="color:var(--accent)">{{ product.name }}</span>
+  </p>
+
+  <div class="product-detail-grid">
+    <!-- Visual -->
+    <div class="detail-visual" id="detailVisual">
+      <!-- emoji injected by JS -->
+    </div>
+
+    <!-- Body -->
+    <div class="detail-body">
+      <div class="detail-eyebrow">
+        <span class="section-label">{{ product.category_meta.label }}</span>
+        {% if product.badge %}
+          <span class="card-badge {% if product.badge == 'Bestseller' %}badge-bestseller{% elif product.badge == 'Neu' %}badge-neu{% else %}badge-top{% endif %}" style="position:static">{{ product.badge }}</span>
+        {% endif %}
+        {% if product.in_stock %}
+          <span style="font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.1em;color:var(--green)">● Auf Lager</span>
+        {% else %}
+          <span style="font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.1em;color:var(--accent2)">● Ausverkauft</span>
+        {% endif %}
+      </div>
+
+      <h1 class="detail-name">{{ product.name }}</h1>
+      <p class="detail-subtitle">{{ product.subtitle }}</p>
+
+      <div class="detail-rating">
+        <span class="stars" id="detailStars"></span>
+        <span style="color:var(--text)">{{ product.rating }}</span>
+        <span style="color:var(--muted)">({{ product.reviews | int }} Bewertungen)</span>
+      </div>
+
+      <p class="detail-description">{{ product.description }}</p>
+
+      <!-- Macros -->
+      <div class="detail-macros">
+        <div class="detail-macro-item">
+          <span class="detail-macro-val" id="proteinVal">{{ product.macros.protein }}g</span>
+          <span class="detail-macro-label">Protein</span>
+        </div>
+        <div class="detail-macro-item">
+          <span class="detail-macro-val">{{ product.macros.carbs }}g</span>
+          <span class="detail-macro-label">Carbs</span>
+        </div>
+        <div class="detail-macro-item">
+          <span class="detail-macro-val">{{ product.macros.fat }}g</span>
+          <span class="detail-macro-label">Fett</span>
+        </div>
+        <div class="detail-macro-item">
+          <span class="detail-macro-val">{{ product.macros.calories }}</span>
+          <span class="detail-macro-label">kcal</span>
+        </div>
+      </div>
+
+      <!-- Flavors -->
+      {% if product.flavors %}
+      <div class="detail-flavors">
+        <h4>Geschmack wählen</h4>
+        <div class="flavor-options">
+          {% for f in product.flavors %}
+          <button class="flavor-btn {% if loop.first %}active{% endif %}" onclick="selectFlavor(this)">{{ f }}</button>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Price & Buy -->
+      <div class="detail-price-row">
+        <div>
+          <div class="detail-price">{{ "%.2f"|format(product.price) | replace('.', ',') }}€</div>
+          <div class="detail-meta">{{ product.weight }} · {{ product.servings }} Servings · {{ product.serving_size }}/Serving</div>
+        </div>
+      </div>
+
+      <div class="detail-buy-row">
+        <button class="btn-primary" onclick="addToCart('{{ product.id }}','{{ product.name }}',{{ product.price }},'{{ product.category }}')">
+          🛒 In den Warenkorb
+        </button>
+        <a href="/cart" class="btn-ghost">Warenkorb ansehen</a>
+      </div>
+
+      <p class="sku-info">SKU: {{ product.sku }} · 30 Tage Rückgabe · Versand 24–48h</p>
+
+      <!-- Tabs -->
+      <div class="detail-tabs" style="margin-top:2.5rem">
+        <button class="tab-btn active" onclick="showTab('desc',this)">Beschreibung</button>
+        <button class="tab-btn" onclick="showTab('benefits',this)">Vorteile</button>
+        <button class="tab-btn" onclick="showTab('usage',this)">Verwendung</button>
+        <button class="tab-btn" onclick="showTab('ingr',this)">Zutaten</button>
+      </div>
+
+      <div id="tab-desc" class="tab-content active">
+        <p class="detail-long-desc">{{ product.long_description }}</p>
+      </div>
+      <div id="tab-benefits" class="tab-content">
+        <div class="benefits-grid">
+          {% for b in product.benefits %}
+          <div class="benefit-item">{{ b }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      <div id="tab-usage" class="tab-content">
+        <p class="detail-ingredients-text">{{ product.usage }}</p>
+      </div>
+      <div id="tab-ingr" class="tab-content">
+        <p class="detail-ingredients-text">{{ product.ingredients }}</p>
+        {% if product.warnings %}
+        <p class="detail-warnings">⚠ {{ product.warnings }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">
+    <span class="logo"><span>BTS</span> Nutrition</span>
+    <span class="logo-sub">BrewTein Sport Nutrition</span>
+    <p>Premium Sports Nutrition für ambitionierte Athleten.</p>
+  </div>
+  <div class="footer-col"><h4>Shop</h4><ul><li><a href="/">Alle Produkte</a></li></ul></div>
+  <div class="footer-col"><h4>Info</h4><ul><li><a href="/about">Über uns</a></li><li><a href="/blog">Blog</a></li></ul></div>
+  <div class="footer-col"><h4>Legal</h4><ul><li><a href="/impressum">Impressum</a></li><li><a href="/datenschutz">Datenschutz</a></li><li><a href="/agb">AGB</a></li></ul></div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2025 BTS Nutrition – BrewTein Sport Nutrition GmbH</span>
+  <div class="footer-bottom-links"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/agb">AGB</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+const EMOJI_MAP  = {protein:'🥛','pre-workout':'⚡',vitamins:'💊',recovery:'🔄'};
+const CAT_COLORS = {protein:'#e8ff00','pre-workout':'#ff4d1c',vitamins:'#00e5b0',recovery:'#a78bfa'};
+
+const cat   = '{{ product.category }}';
+const emoji = EMOJI_MAP[cat] || '⭐';
+const color = CAT_COLORS[cat] || '#e8ff00';
+
+document.getElementById('detailVisual').innerHTML =
+  `<span style="font-size:8rem;filter:drop-shadow(0 0 40px ${color}66)">${emoji}</span>`;
+document.getElementById('detailVisual').style.background =
+  `radial-gradient(ellipse at 50% 60%, ${color}12, var(--bg3) 70%)`;
+
+document.getElementById('proteinVal').style.color = color;
+
+const r = {{ product.rating }};
+document.getElementById('detailStars').textContent =
+  '★'.repeat(Math.min(5,Math.round(r))) + '☆'.repeat(Math.max(0,5-Math.round(r)));
+
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+function selectFlavor(btn) {
+  document.querySelectorAll('.flavor-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+{
+  "id": "wie-viel-protein",
+  "title": "Wie viel Protein braucht man wirklich pro Tag?",
+  "excerpt": "Die Wissenschaft hat gesprochen: Die optimale Proteinmenge für Muskelaufbau liegt höher als viele denken. Wir analysieren die aktuellsten Meta-Analysen.",
+  "category": "Protein",
+  "category_color": "#e8ff00",
+  "emoji": "🥛",
+  "author": "Dr. Max Bremer",
+  "author_role": "Gründer & Formulierungschef",
+  "date": "2025-03-15",
+  "date_display": "15. März 2025",
+  "read_time": "8 min",
+  "featured": true,
+  "tags": ["Protein", "Muskelaufbau", "Ernährung", "Wissenschaft"],
+  "content": [
+    {
+      "type": "intro",
+      "text": "\"Ich esse doch schon genug Protein\" – diesen Satz hören wir oft. Doch was bedeutet \"genug\" wirklich? Die Sporternährungswissenschaft hat in den letzten Jahren bahnbrechende Erkenntnisse geliefert, die viele bisherige Empfehlungen grundlegend revidieren."
+    },
+    {
+      "type": "heading",
+      "text": "Die alten Empfehlungen: Warum 0,8g/kg nicht reichen"
+    },
+    {
+      "type": "paragraph",
+      "text": "Die Deutsche Gesellschaft für Ernährung (DGE) empfiehlt für Erwachsene 0,8g Protein pro Kilogramm Körpergewicht täglich. Diese Zahl wurde für Personen mit normalem Alltagsleben berechnet – nicht für Sportler, die ihre Muskeln regelmäßig belasten und Proteinabbau aktiv betreiben."
+    },
+    {
+      "type": "paragraph",
+      "text": "Für Kraftsportler und alle, die Muskelmasse aufbauen oder erhalten wollen, ist diese Menge schlicht unzureichend. Mehrere Meta-Analysen aus den Jahren 2017–2024 zeigen konsistent: Das Optimum liegt deutlich höher."
+    },
+    {
+      "type": "highlight",
+      "text": "Aktueller Forschungsstand: 1,6–2,2g Protein pro kg Körpergewicht täglich ist der optimale Bereich für Muskelaufbau bei trainierenden Personen."
+    },
+    {
+      "type": "heading",
+      "text": "Was die Meta-Analysen sagen"
+    },
+    {
+      "type": "paragraph",
+      "text": "Morton et al. (2018) analysierten 49 randomisierte kontrollierte Studien mit über 1.800 Teilnehmern. Das Ergebnis: Der Muskelzuwachs durch Krafttraining nimmt bis zu einer Proteinzufuhr von 1,62g/kg/Tag zu – danach flacht die Kurve deutlich ab. Bei höherer Zufuhr gibt es marginale Zusatzeffekte, aber keinen Schaden."
+    },
+    {
+      "type": "paragraph",
+      "text": "Für ältere Sportler (über 60) und Personen in einer Kalorienrestriktion (Diät) empfehlen die aktuellen Studien sogar 2,0–2,4g/kg, da die Muskelproteinsynthese im Alter weniger effizient wird und der Körper mehr Protein für andere Funktionen verwendet."
+    },
+    {
+      "type": "heading",
+      "text": "Verteilung über den Tag: Timing matters"
+    },
+    {
+      "type": "paragraph",
+      "text": "Nicht nur die Gesamtmenge, sondern auch die Verteilung über den Tag ist entscheidend. Die Muskelproteinsynthese wird durch sogenannte \"Protein Pulses\" maximiert: Mehrere Mahlzeiten mit je 20–40g hochwertigem Protein stimulieren den Muskelaufbau stärker als dieselbe Gesamtmenge auf 1–2 Mahlzeiten verteilt."
+    },
+    {
+      "type": "list",
+      "heading": "Praktische Verteilung für 80kg Athlet (Ziel: 160g/Tag)",
+      "items": [
+        "Frühstück: 40g Protein (z.B. Whey Shake + Eier)",
+        "Mittagessen: 40g Protein (z.B. Hähnchen/Lachs + Hülsenfrüchte)",
+        "Pre/Post-Workout: 30g Protein (z.B. Whey Gold Pro)",
+        "Abendessen: 35g Protein (z.B. Fleisch/Fisch)",
+        "Vor dem Schlafen: 30g Casein (z.B. Night Casein)"
+      ]
+    },
+    {
+      "type": "heading",
+      "text": "Proteinqualität: Nicht alles Protein ist gleich"
+    },
+    {
+      "type": "paragraph",
+      "text": "Entscheidend ist nicht nur die Menge, sondern auch die biologische Wertigkeit. Tierische Proteine (Whey, Eier, Fleisch) haben eine höhere biologische Wertigkeit und ein vollständigeres Aminosäureprofil als die meisten pflanzlichen Quellen. Der PDCAAS- und DIAAS-Score helfen, Proteinquellen zu vergleichen."
+    },
+    {
+      "type": "paragraph",
+      "text": "Whey Protein Isolat hat mit einem PDCAAS von 1,0 (Maximalwert) die höchste biologische Wertigkeit überhaupt – gefolgt von Ei, Kasein und Sojaprotein. Pflanzliche Quellen wie Erbsenprotein haben einen niedrigeren Score, was durch eine höhere Gesamtmenge ausgeglichen werden kann."
+    },
+    {
+      "type": "highlight",
+      "text": "Faustregel: Bei rein pflanzlicher Ernährung 10–15% mehr Protein als bei omnivorer Ernährung einplanen, um die geringere Bioverfügbarkeit auszugleichen."
+    },
+    {
+      "type": "heading",
+      "text": "Fazit: Dein persönliches Protein-Optimum"
+    },
+    {
+      "type": "paragraph",
+      "text": "Die Formel ist einfacher als viele denken: Nimm dein Zielgewicht in kg, multipliziere mit 1,8–2,0 – das ist deine tägliche Proteinzufuhr in Gramm. Verteile diese Menge auf 4–5 Mahlzeiten, priorisiere hochwertige Quellen, und nutze Supplements gezielt um Lücken zu schließen."
+    },
+    {
+      "type": "paragraph",
+      "text": "Mit unserem Whey Gold Pro (27g Protein/Serving) und Night Casein (24g/Serving) deckst du Post-Workout und nächtliche Versorgung optimal ab – für maximal effiziente Regeneration rund um die Uhr."
+    }
+  ]
+}
