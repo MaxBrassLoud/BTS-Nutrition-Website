@@ -47,7 +47,6 @@ function closeMobileNav() {
 /* ── Init ── */
 document.addEventListener('DOMContentLoaded', () => {
   updateCartBadge();
-  // Mark active nav link
   const path = window.location.pathname;
   document.querySelectorAll('.nav-links a').forEach(a => {
     if (a.getAttribute('href') === path) a.classList.add('active');

@@ -12,33 +12,20 @@ BLOG_DIR     = os.path.join(BASE_DIR, "blog")
 os.makedirs(PRODUCTS_DIR, exist_ok=True)
 os.makedirs(BLOG_DIR, exist_ok=True)
 os.makedirs(os.path.join(BASE_DIR, "static", "assets"), exist_ok=True)
-for cat in ["protein", "pre-workout", "vitamins", "recovery"]:
-    os.makedirs(os.path.join(PRODUCTS_DIR, cat), exist_ok=True)
-
-CATEGORY_META = {
-    "protein":      {"label": "Protein",     "icon": "💪", "color": "#e8ff00"},
-    "pre-workout":  {"label": "Pre-Workout",  "icon": "⚡", "color": "#ff4d1c"},
-    "vitamins":     {"label": "Vitamine",     "icon": "🌿", "color": "#00e5b0"},
-    "recovery":     {"label": "Recovery",     "icon": "🔄", "color": "#a78bfa"},
-}
 
 
 # ── Products ─────────────────────────────────────────
-def load_products(category=None):
+def load_products():
+    """Load all products (max 5 expected, no categories)."""
     products = []
-    categories = [category] if category else os.listdir(PRODUCTS_DIR)
-    for cat in categories:
-        cat_path = os.path.join(PRODUCTS_DIR, cat)
-        if not os.path.isdir(cat_path):
-            continue
-        for filename in sorted(os.listdir(cat_path)):
-            if filename.endswith(".json"):
-                with open(os.path.join(cat_path, filename), "r", encoding="utf-8") as f:
-                    p = json.load(f)
-                    p["category"]      = cat
-                    p["category_meta"] = CATEGORY_META.get(cat, {})
-                    products.append(p)
-    return products
+    if not os.path.isdir(PRODUCTS_DIR):
+        return products
+    for filename in sorted(os.listdir(PRODUCTS_DIR)):
+        if filename.endswith(".json"):
+            with open(os.path.join(PRODUCTS_DIR, filename), "r", encoding="utf-8") as f:
+                p = json.load(f)
+                products.append(p)
+    return products[:5]  # Max 5 products
 
 
 def get_product_by_id(product_id):
@@ -60,7 +47,6 @@ def load_posts(limit=None):
             with open(filepath, "r", encoding="utf-8") as f:
                 post = json.load(f)
                 posts.append(post)
-    # Sort newest first
     posts.sort(key=lambda x: x.get("date", ""), reverse=True)
     if limit:
         return posts[:limit]
@@ -78,7 +64,9 @@ def get_post_by_id(post_id):
 # ── Page routes ───────────────────────────────────────
 @app.route("/")
 def index():
-    return render_template("index.html")
+    products = load_products()
+    featured = products[0] if products else None
+    return render_template("index.html", products=products, featured=featured)
 
 @app.route("/about")
 def about():
@@ -97,11 +85,7 @@ def blog_post(post_id):
     if not post:
         abort(404)
     all_posts = load_posts()
-    # Related posts: same category, exclude current
-    related = [p for p in all_posts if p["id"] != post_id and p.get("category") == post.get("category")][:3]
-    if len(related) < 3:
-        related += [p for p in all_posts if p["id"] != post_id and p not in related]
-    related = related[:3]
+    related = [p for p in all_posts if p["id"] != post_id][:3]
     return render_template("blog_post.html", post=post, related=related)
 
 @app.route("/cart")
@@ -131,18 +115,8 @@ def agb():
 # ── API routes ────────────────────────────────────────
 @app.route("/api/products")
 def api_products():
-    category = request.args.get("category")
-    search   = request.args.get("search", "").lower()
-    sort     = request.args.get("sort", "default")
-    products = load_products(category)
-    if search:
-        products = [p for p in products if
-            search in p["name"].lower() or
-            search in p.get("description", "").lower() or
-            any(search in t.lower() for t in p.get("tags", []))]
-    if sort == "price-asc":    products.sort(key=lambda x: x["price"])
-    elif sort == "price-desc": products.sort(key=lambda x: x["price"], reverse=True)
-    elif sort == "rating":     products.sort(key=lambda x: x["rating"], reverse=True)
+    """Simple API: return all products (no filtering/search)."""
+    products = load_products()
     return jsonify({"products": products, "total": len(products)})
 
 @app.route("/api/products/<product_id>")
@@ -152,18 +126,10 @@ def api_product(product_id):
         return jsonify({"error": "not found"}), 404
     return jsonify(p)
 
-@app.route("/api/categories")
-def api_categories():
-    result = []
-    for key, meta in CATEGORY_META.items():
-        result.append({"id": key, **meta, "count": len(load_products(key))})
-    return jsonify(result)
-
 @app.route("/api/blog")
 def api_blog():
     limit = request.args.get("limit", type=int)
     posts = load_posts(limit=limit)
-    # Strip full content for listing
     summary = [{k: v for k, v in p.items() if k != "content"} for p in posts]
     return jsonify({"posts": summary, "total": len(summary)})
 

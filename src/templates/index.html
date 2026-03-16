@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}"/>
 </head>
 <body>
 
@@ -39,23 +39,17 @@
   <a href="/cart" onclick="closeMobileNav()">Warenkorb</a>
 </div>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-image"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-content fade-up">
-    <div class="hero-eyebrow">BrewTein Sport Nutrition</div>
-    <h1>FUEL<br><em>YOUR</em><br>POTENTIAL</h1>
-    <p class="hero-desc">Wissenschaftlich entwickelte Supplements für Athleten, die keine Kompromisse eingehen. Reinste Zutaten, bewiesene Wirkung.</p>
-    <div class="hero-cta">
-      <a href="#shop" class="btn-primary">Jetzt shoppen</a>
-      <a href="/about" class="btn-ghost">Über BTS</a>
-    </div>
-  </div>
-  <div class="hero-stats">
-    <div class="stat-item"><span class="stat-num">50K+</span><span class="stat-label">Kunden</span></div>
-    <div class="stat-item"><span class="stat-num">98%</span><span class="stat-label">Zufriedenheit</span></div>
-    <div class="stat-item"><span class="stat-num">Lab<br>Tested</span><span class="stat-label">Qualität</span></div>
+<!-- FEATURED PRODUCT HERO — Takes full viewport -->
+<section id="productHero" class="product-hero">
+  <!-- Featured product content injected by JS -->
+</section>
+
+<!-- ADDITIONAL PRODUCTS SECTION (if 2–5 products exist) -->
+<section id="additionalProducts" class="additional-products" style="display:none">
+  <div class="additional-products-inner">
+    <div class="section-label">Weitere Produkte</div>
+    <h2 class="section-title">UNSER SORTIMENT</h2>
+    <div id="additionalGrid" class="additional-grid"></div>
   </div>
 </section>
 
@@ -67,38 +61,8 @@
     <span>Über 50.000 zufriedene Kunden</span><span>Ohne künstliche Farbstoffe</span>
     <span>Kostenloser Versand ab 50€</span><span>Laborgeprüfte Qualität</span>
     <span>30 Tage Rückgabe</span><span>Schnelle Lieferung 24–48h</span>
-    <span>Über 50.000 zufriedene Kunden</span><span>Ohne künstliche Farbstoffe</span>
   </div>
 </div>
-
-<!-- SHOP -->
-<section class="shop" id="shop">
-  <div class="shop-header">
-    <div>
-      <div class="section-label">Alle Produkte</div>
-      <h2 class="section-title">SORTIMENT</h2>
-    </div>
-    <div class="filters" id="categoryFilters">
-      <button class="filter-btn active" data-cat="">Alle</button>
-    </div>
-  </div>
-  <div class="controls">
-    <div class="search-wrap">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input class="search-input" type="text" id="searchInput" placeholder="Suche Produkte, Tags…" autocomplete="off"/>
-    </div>
-    <select class="sort-select" id="sortSelect">
-      <option value="default">Sortieren</option>
-      <option value="price-asc">Preis ↑</option>
-      <option value="price-desc">Preis ↓</option>
-      <option value="rating">Beste Bewertung</option>
-    </select>
-    <div class="results-count" id="resultsCount"><span>0</span> Produkte</div>
-  </div>
-  <div class="product-grid" id="productGrid"></div>
-</section>
 
 <!-- FOOTER -->
 <footer>
@@ -108,12 +72,11 @@
     <p>Premium Sports Nutrition für ambitionierte Athleten. Wissenschaftlich entwickelt, laborgeprüft, kompromisslos in Qualität.</p>
   </div>
   <div class="footer-col"><h4>Shop</h4><ul>
-    <li><a href="/">Protein</a></li><li><a href="/">Pre-Workout</a></li>
-    <li><a href="/">Vitamine</a></li><li><a href="/">Recovery</a></li>
+    <li><a href="/">Alle Produkte</a></li>
+    <li><a href="/cart">Warenkorb</a></li>
   </ul></div>
   <div class="footer-col"><h4>Info</h4><ul>
     <li><a href="/about">Über uns</a></li><li><a href="/blog">Blog</a></li>
-    <li><a href="/cart">Warenkorb</a></li>
   </ul></div>
   <div class="footer-col"><h4>Legal</h4><ul>
     <li><a href="/impressum">Impressum</a></li>
@@ -132,6 +95,6 @@
 
 <div class="toast" id="toast"></div>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
-<script src="{{ url_for('static', filename='js/shop.js') }}"></script>
+<script src="{{ url_for('static', filename='js/hero-product.js') }}"></script>
 </body>
 </html>
