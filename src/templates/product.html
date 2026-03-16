@@ -42,7 +42,7 @@
     <!-- Body -->
     <div class="detail-body">
       <div class="detail-eyebrow">
-        <span class="section-label">{{ product.category_meta.label }}</span>
+        <span class="section-label">{{ product.category | upper }}</span>
         {% if product.badge %}
           <span class="card-badge {% if product.badge == 'Bestseller' %}badge-bestseller{% elif product.badge == 'Neu' %}badge-neu{% else %}badge-top{% endif %}" style="position:static">{{ product.badge }}</span>
         {% endif %}
