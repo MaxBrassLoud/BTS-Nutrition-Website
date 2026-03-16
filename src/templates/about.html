@@ -8,6 +8,50 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <style>
+    /* Team roles box styling */
+    .team-roles-box {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .team-roles-label {
+      font-family: var(--font-mono);
+      font-size: 0.56rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+      display: block;
+    }
+
+    .team-roles-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .team-role-tag {
+      display: inline-block;
+      padding: 0.3rem 0.65rem;
+      background: rgba(232, 255, 0, 0.08);
+      border: 1px solid rgba(232, 255, 0, 0.2);
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .team-role-tag:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(232, 255, 0, 0.12);
+    }
+  </style>
 </head>
 <body>
 <nav>
@@ -88,14 +132,32 @@
           <div class="team-name">Christian Bendeich</div>
           <div class="team-role">CEO & Founder</div>
           <p class="team-bio">Sporternährungswissenschaftler mit 12 Jahren Forschungserfahrung. Passionierter Powerlifter.</p>
+          <div class="team-roles-box">
+            <div class="team-roles-label">Verantwortlichkeiten</div>
+            <div class="team-roles-list">
+              <span class="team-role-tag">Strategie</span>
+              <span class="team-role-tag">Forschung</span>
+              <span class="team-role-tag">Formulierung</span>
+              <span class="team-role-tag">Qualitätsicherung</span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="team-card fade-up" style="animation-delay:.1s">
         <div class="team-photo">👩‍💼</div>
         <div class="team-info">
           <div class="team-name">Ludwig Gaukler</div>
-          <div class="team-role">Head of Product Development and Finance Co Founder</div>
+          <div class="team-role">Head of Product Development & Finance Co-Founder</div>
           <p class="team-bio">Ex-Triathletin, MBA absolviert. Bringt strategisches Denken und sportliche Leidenschaft zusammen.</p>
+          <div class="team-roles-box">
+            <div class="team-roles-label">Verantwortlichkeiten</div>
+            <div class="team-roles-list">
+              <span class="team-role-tag">Produktentwicklung</span>
+              <span class="team-role-tag">Finanzen</span>
+              <span class="team-role-tag">Geschäftsplanung</span>
+              <span class="team-role-tag">Partnerschaften</span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="team-card fade-up" style="animation-delay:.15s">
@@ -104,8 +166,16 @@
           <div class="team-name">Maximillian Ludwig</div>
           <div class="team-role">Head of Technology</div>
           <p class="team-bio">Foodtechnologe und Fitness-Coach. Verantwortlich für Geschmack, Textur und Mixability unserer Produkte.</p>
+          <div class="team-roles-box">
+            <div class="team-roles-label">Verantwortlichkeiten</div>
+            <div class="team-roles-list">
+              <span class="team-role-tag">Geschmacksentwicklung</span>
+              <span class="team-role-tag">Textur & Konsistenz</span>
+              <span class="team-role-tag">Produkttechnologie</span>
+              <span class="team-role-tag">Kundenerfahrung</span>
+            </div>
+          </div>
         </div>
-      
       </div>
     </div>
   </div>
