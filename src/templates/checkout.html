@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Kasse — BTS Nutrition</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <style>
+    /* ══ CHECKOUT LAYOUT ══ */
+    .checkout-page {
+      padding: clamp(5rem,8vw,7rem) clamp(1.25rem,4vw,3rem) 5rem;
+      min-height: 100vh;
+    }
+
+    .checkout-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    /* ══ STEP PROGRESS ══ */
+    .checkout-progress {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 2.5rem;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      position: relative;
+    }
+
+    .progress-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: calc(22px + 0.75rem);
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 1px;
+      background: var(--border-soft);
+      transition: background 0.5s;
+    }
+    .progress-step.done:not(:last-child)::after {
+      background: linear-gradient(90deg, var(--bronze), rgba(193,124,58,0.3));
+    }
+
+    .step-circle {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      border: 1px solid var(--border-soft);
+      background: var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+      color: var(--text-dim);
+      flex-shrink: 0;
+      transition: all 0.4s;
+      position: relative; z-index: 1;
+    }
+    .progress-step.active .step-circle {
+      border-color: var(--bronze);
+      background: rgba(193,124,58,0.12);
+      color: var(--bronze);
+      box-shadow: 0 0 0 4px rgba(193,124,58,0.1);
+    }
+    .progress-step.done .step-circle {
+      border-color: var(--bronze);
+      background: linear-gradient(135deg, var(--bronze), var(--bronze-dk));
+      color: #07080a;
+    }
+
+    .step-label {
+      font-family: var(--font-mono); font-size: 0.6rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--text-dim);
+      transition: color 0.3s;
+      white-space: nowrap;
+    }
+    .progress-step.active .step-label { color: var(--bronze); }
+    .progress-step.done .step-label { color: var(--text-soft); }
+
+    /* ══ CHECKOUT CARD ══ */
+    .checkout-card {
+      background: var(--bg2);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .checkout-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--bronze), transparent);
+      opacity: 0.5;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem; letter-spacing: 0.02em;
+      margin-bottom: 0.4rem;
+    }
+    .card-subtitle {
+      font-family: var(--font-mono); font-size: 0.62rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-dim); margin-bottom: 2rem;
+    }
+
+    /* ══ FORM ══ */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .form-row.full { grid-template-columns: 1fr; }
+    .form-row.trio { grid-template-columns: 2fr 1fr 1fr; }
+
+    .form-field {
+      display: flex; flex-direction: column; gap: 0.4rem;
+    }
+
+    .form-label {
+      font-family: var(--font-mono); font-size: 0.58rem;
+      letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-soft);
+    }
+
+    .form-input {
+      background: var(--bg3);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      padding: 0.78rem 1rem;
+      color: var(--text);
+      font-family: var(--font-body); font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      width: 100%;
+    }
+    .form-input::placeholder { color: var(--text-dim); }
+    .form-input:focus {
+      border-color: rgba(193,124,58,0.45);
+      box-shadow: 0 0 0 3px rgba(193,124,58,0.08);
+      background: rgba(193,124,58,0.03);
+    }
+    .form-input.error {
+      border-color: rgba(196,82,64,0.5);
+      box-shadow: 0 0 0 3px rgba(196,82,64,0.08);
+    }
+
+    /* Card number split */
+    .card-num-wrap {
+      position: relative;
+    }
+    .card-num-wrap .card-icon {
+      position: absolute; right: 1rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem; pointer-events: none;
+    }
+
+    /* ══ SHIPPING OPTIONS ══ */
+    .shipping-options {
+      display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem;
+    }
+    .shipping-option {
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--bg3); border: 1px solid var(--border-soft);
+      border-radius: var(--radius); padding: 1rem 1.25rem;
+      cursor: pointer; transition: all 0.2s;
+      position: relative;
+    }
+    .shipping-option:hover { border-color: var(--border); }
+    .shipping-option.selected {
+      border-color: var(--bronze);
+      background: rgba(193,124,58,0.05);
+    }
+    .shipping-option input[type="radio"] { display: none; }
+    .radio-dot {
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 1px solid var(--border-soft);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: all 0.2s;
+    }
+    .shipping-option.selected .radio-dot {
+      border-color: var(--bronze);
+      background: linear-gradient(135deg, var(--bronze), var(--bronze-dk));
+    }
+    .radio-dot::after {
+      content: '';
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #07080a; opacity: 0; transition: opacity 0.2s;
+    }
+    .shipping-option.selected .radio-dot::after { opacity: 1; }
+    .shipping-info { flex: 1; }
+    .shipping-name { font-size: 0.92rem; font-weight: 500; margin-bottom: 0.2rem; }
+    .shipping-desc { font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.08em; color: var(--text-dim); }
+    .shipping-price {
+      font-family: var(--font-display); font-size: 1.4rem;
+      color: var(--bronze);
+    }
+
+    /* ══ PAYMENT METHODS ══ */
+    .payment-methods {
+      display: flex; gap: 0.65rem; margin-bottom: 1.75rem; flex-wrap: wrap;
+    }
+    .pay-btn {
+      flex: 1; min-width: 90px;
+      background: var(--bg3); border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm); padding: 0.8rem 1rem;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+      font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-dim);
+    }
+    .pay-btn:hover { border-color: var(--border); color: var(--text-soft); }
+    .pay-btn.active {
+      border-color: var(--bronze);
+      background: rgba(193,124,58,0.07);
+      color: var(--bronze);
+    }
+    .pay-btn .pay-icon { font-size: 1.5rem; }
+
+    /* Secure badge */
+    .secure-badge {
+      display: flex; align-items: center; gap: 0.5rem;
+      margin-top: 1.5rem;
+      padding: 0.65rem 1rem;
+      background: rgba(90,158,106,0.07); border: 1px solid rgba(90,158,106,0.18);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.1em;
+      color: var(--green);
+    }
+
+    /* ══ NAV BUTTONS ══ */
+    .checkout-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 2rem; gap: 1rem;
+    }
+
+    /* ══ STEP PANELS ══ */
+    .step-panel { display: none; }
+    .step-panel.active {
+      display: block;
+      animation: fadeSlideIn 0.35s ease forwards;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ══ ORDER SUMMARY SIDEBAR ══ */
+    .order-summary {
+      background: var(--bg2); border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg); padding: 2rem;
+      position: sticky; top: 84px;
+    }
+    .order-summary h3 {
+      font-family: var(--font-display); font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .order-items { display: flex; flex-direction: column; gap: 0.9rem; margin-bottom: 1.5rem; }
+    .order-item {
+      display: flex; gap: 0.85rem; align-items: center;
+    }
+    .order-item-img {
+      width: 48px; height: 48px; background: var(--bg3);
+      border-radius: var(--radius-sm); border: 1px solid var(--border-soft);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; flex-shrink: 0;
+    }
+    .order-item-info { flex: 1; min-width: 0; }
+    .order-item-name {
+      font-size: 0.88rem; font-weight: 500; margin-bottom: 0.15rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .order-item-sub {
+      font-family: var(--font-mono); font-size: 0.55rem;
+      letter-spacing: 0.08em; color: var(--text-dim);
+    }
+    .order-item-price {
+      font-family: var(--font-display); font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .order-divider { height: 1px; background: var(--border-soft); margin: 1rem 0; }
+
+    .summary-line {
+      display: flex; justify-content: space-between;
+      font-size: 0.88rem; color: var(--text-soft);
+      margin-bottom: 0.55rem;
+    }
+    .summary-line.total {
+      font-family: var(--font-display); font-size: 1.6rem;
+      color: var(--text); padding-top: 0.75rem;
+      border-top: 1px solid var(--border-soft); margin-top: 0.5rem;
+    }
+    .summary-line .free { color: var(--green); }
+    .summary-shipping-note {
+      font-family: var(--font-mono); font-size: 0.56rem;
+      letter-spacing: 0.1em; color: var(--text-dim);
+      margin-top: -0.4rem; margin-bottom: 0.55rem;
+      text-align: right;
+    }
+
+    /* ══ PROCESSING OVERLAY ══ */
+    #processingOverlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(7,8,10,0.94);
+      backdrop-filter: blur(16px);
+      display: none;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 2rem;
+    }
+    #processingOverlay.show { display: flex; }
+
+    .process-spinner {
+      width: 64px; height: 64px;
+      border: 2px solid rgba(193,124,58,0.2);
+      border-top-color: var(--bronze);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .process-label {
+      font-family: var(--font-mono); font-size: 0.75rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-soft);
+    }
+
+    .process-steps {
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      min-height: 80px;
+    }
+    .process-step-item {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      letter-spacing: 0.1em; color: var(--text-dim);
+      opacity: 0; transition: opacity 0.4s;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .process-step-item.visible { opacity: 1; }
+    .process-step-item.ok { color: var(--green); }
+    .process-step-item.fail { color: var(--red); }
+
+    /* ══ ERROR STATE ══ */
+    #errorState {
+      display: none; flex-direction: column; align-items: center;
+      gap: 1.25rem; text-align: center; max-width: 480px;
+    }
+    #errorState.show { display: flex; animation: fadeSlideIn 0.5s ease forwards; }
+
+    .error-icon-big {
+      font-size: 4rem;
+      animation: errorShake 0.5s ease;
+    }
+    @keyframes errorShake {
+      0%,100% { transform: translateX(0); }
+      20%     { transform: translateX(-8px); }
+      40%     { transform: translateX(8px); }
+      60%     { transform: translateX(-5px); }
+      80%     { transform: translateX(5px); }
+    }
+
+    .error-title-big {
+      font-family: var(--font-display); font-size: clamp(2rem,5vw,3.2rem);
+      letter-spacing: 0.02em; line-height: 1;
+    }
+    .error-desc-big {
+      font-size: 0.95rem; line-height: 1.75; color: var(--text-soft);
+      max-width: 400px;
+    }
+    .error-code-chip {
+      background: rgba(196,82,64,0.1); border: 1px solid rgba(196,82,64,0.25);
+      border-radius: var(--radius-sm); padding: 0.6rem 1.25rem;
+      font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.12em;
+      color: var(--red);
+    }
+    .error-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+
+    /* ══ DIVIDER TEXT ══ */
+    .or-divider {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 1.5rem 0;
+      font-family: var(--font-mono); font-size: 0.58rem;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim);
+    }
+    .or-divider::before,
+    .or-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border-soft);
+    }
+
+    /* ══ RESPONSIVE ══ */
+    @media (max-width: 900px) {
+      .checkout-inner { grid-template-columns: 1fr; }
+      .order-summary { position: static; }
+    }
+    @media (max-width: 560px) {
+      .form-row { grid-template-columns: 1fr; }
+      .form-row.trio { grid-template-columns: 1fr 1fr; }
+      .checkout-progress .step-label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="/"><span>BTS</span> Nutrition<small>BrewTein Sport Nutrition</small></a>
+  <ul class="nav-links">
+    <li><a href="/">Shop</a></li>
+    <li><a href="/about">Über uns</a></li>
+    <li><a href="/blog">Blog</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="/cart" class="nav-cart">🛒 Warenkorb <span class="cart-count" id="cartCount">0</span></a>
+    <button class="nav-hamburger" onclick="openMobileNav()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button class="mobile-nav-close" onclick="closeMobileNav()">✕</button>
+  <a href="/">Shop</a><a href="/about">Über uns</a><a href="/blog">Blog</a><a href="/cart">Warenkorb</a>
+</div>
+
+<!-- PAGE -->
+<section class="checkout-page">
+  <div style="max-width:1080px;margin:0 auto">
+    <div style="margin-bottom:2rem">
+      <div class="section-label" style="margin-bottom:0.4rem">Kasse</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);letter-spacing:0.02em;line-height:0.95">
+        BESTELLUNG <span style="color:var(--bronze)">ABSCHLIESSEN</span>
+      </h1>
+    </div>
+
+    <!-- Step progress -->
+    <div class="checkout-progress" id="stepProgress">
+      <div class="progress-step active" data-step="1">
+        <div class="step-circle">1</div>
+        <span class="step-label">Adresse</span>
+      </div>
+      <div class="progress-step" data-step="2">
+        <div class="step-circle">2</div>
+        <span class="step-label">Versand</span>
+      </div>
+      <div class="progress-step" data-step="3">
+        <div class="step-circle">3</div>
+        <span class="step-label">Zahlung</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="checkout-inner">
+    <!-- LEFT: Form -->
+    <div>
+      <div class="checkout-card">
+
+        <!-- ── STEP 1: ADDRESS ── -->
+        <div class="step-panel active" id="step1">
+          <div class="card-title">Lieferadresse</div>
+          <div class="card-subtitle">Schritt 1 von 3 · Wohin sollen wir liefern?</div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label class="form-label">Vorname</label>
+              <input class="form-input" type="text" placeholder="Max" id="firstName"/>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Nachname</label>
+              <input class="form-input" type="text" placeholder="Mustermann" id="lastName"/>
+            </div>
+          </div>
+
+          <div class="form-row full">
+            <div class="form-field">
+              <label class="form-label">E-Mail</label>
+              <input class="form-input" type="email" placeholder="max@example.de" id="email"/>
+            </div>
+          </div>
+
+          <div class="form-row full">
+            <div class="form-field">
+              <label class="form-label">Straße & Hausnummer</label>
+              <input class="form-input" type="text" placeholder="Musterstraße 42" id="street"/>
+            </div>
+          </div>
+
+          <div class="form-row trio">
+            <div class="form-field">
+              <label class="form-label">Stadt</label>
+              <input class="form-input" type="text" placeholder="München" id="city"/>
+            </div>
+            <div class="form-field">
+              <label class="form-label">PLZ</label>
+              <input class="form-input" type="text" placeholder="80331" id="plz"/>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Land</label>
+              <select class="form-input" id="country">
+                <option>Deutschland</option>
+                <option>Österreich</option>
+                <option>Schweiz</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row full" style="margin-top:0.5rem">
+            <div class="form-field">
+              <label class="form-label">Telefon (optional)</label>
+              <input class="form-input" type="tel" placeholder="+49 89 123456"/>
+            </div>
+          </div>
+
+          <div class="checkout-nav">
+            <a href="/cart" class="btn-ghost" style="font-size:0.7rem;padding:0.65rem 1.5rem">← Warenkorb</a>
+            <button class="btn-primary" onclick="goToStep(2)">
+              Weiter zum Versand →
+            </button>
+          </div>
+        </div>
+
+        <!-- ── STEP 2: SHIPPING ── -->
+        <div class="step-panel" id="step2">
+          <div class="card-title">Versandmethode</div>
+          <div class="card-subtitle">Schritt 2 von 3 · Wie schnell soll es ankommen?</div>
+
+          <div class="shipping-options">
+            <label class="shipping-option selected" onclick="selectShipping(this, 0, 'standard')">
+              <input type="radio" name="shipping" value="standard" checked/>
+              <div class="radio-dot"></div>
+              <div class="shipping-info">
+                <div class="shipping-name">DHL Standardlieferung</div>
+                <div class="shipping-desc">3–5 Werktage · Sendungsverfolgung inklusive</div>
+              </div>
+              <div class="shipping-price" id="priceStandard">4,99€</div>
+            </label>
+
+            <label class="shipping-option" onclick="selectShipping(this, 5.99, 'express')">
+              <input type="radio" name="shipping" value="express"/>
+              <div class="radio-dot"></div>
+              <div class="shipping-info">
+                <div class="shipping-name">DHL Express (24h)</div>
+                <div class="shipping-desc">Nächster Werktag · Bis 12 Uhr bestellt, morgen da</div>
+              </div>
+              <div class="shipping-price">10,99€</div>
+            </label>
+
+            <label class="shipping-option" onclick="selectShipping(this, 12.99, 'same')">
+              <input type="radio" name="shipping" value="same"/>
+              <div class="radio-dot"></div>
+              <div class="shipping-info">
+                <div class="shipping-name">⚡ Same-Day Kurier</div>
+                <div class="shipping-desc">Heute noch · Nur in München verfügbar · Bis 14 Uhr</div>
+              </div>
+              <div class="shipping-price">15,99€</div>
+            </label>
+          </div>
+
+          <!-- Address preview -->
+          <div style="background:var(--bg3);border:1px solid var(--border-soft);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:0.5rem">
+            <div style="font-family:var(--font-mono);font-size:0.56rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.5rem">Lieferung an</div>
+            <div id="addressPreview" style="font-size:0.88rem;line-height:1.7;color:var(--text-soft)">—</div>
+          </div>
+
+          <div class="checkout-nav">
+            <button class="btn-ghost" onclick="goToStep(1)" style="font-size:0.7rem;padding:0.65rem 1.5rem">← Zurück</button>
+            <button class="btn-primary" onclick="goToStep(3)">
+              Weiter zur Zahlung →
+            </button>
+          </div>
+        </div>
+
+        <!-- ── STEP 3: PAYMENT ── -->
+        <div class="step-panel" id="step3">
+          <div class="card-title">Zahlungsmethode</div>
+          <div class="card-subtitle">Schritt 3 von 3 · Fast geschafft!</div>
+
+          <div class="payment-methods">
+            <button class="pay-btn active" onclick="selectPayment(this,'card')">
+              <span class="pay-icon">💳</span>
+              Kreditkarte
+            </button>
+            <button class="pay-btn" onclick="selectPayment(this,'paypal')">
+              <span class="pay-icon">🅿️</span>
+              PayPal
+            </button>
+            <button class="pay-btn" onclick="selectPayment(this,'apple')">
+              <span class="pay-icon">🍎</span>
+              Apple Pay
+            </button>
+            <button class="pay-btn" onclick="selectPayment(this,'klarna')">
+              <span class="pay-icon">🩷</span>
+              Klarna
+            </button>
+          </div>
+
+          <!-- Card form -->
+          <div id="cardForm">
+            <div class="form-row full">
+              <div class="form-field">
+                <label class="form-label">Karteninhaber</label>
+                <input class="form-input" type="text" placeholder="Max Mustermann" id="cardName"/>
+              </div>
+            </div>
+            <div class="form-row full">
+              <div class="form-field">
+                <label class="form-label">Kartennummer</label>
+                <div class="card-num-wrap">
+                  <input class="form-input" type="text" placeholder="1234 5678 9012 3456"
+                    id="cardNumber" maxlength="19" oninput="formatCardNumber(this)"/>
+                  <span class="card-icon" id="cardIcon">💳</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label class="form-label">Ablaufdatum</label>
+                <input class="form-input" type="text" placeholder="MM/JJ" maxlength="5"
+                  id="cardExpiry" oninput="formatExpiry(this)"/>
+              </div>
+              <div class="form-field">
+                <label class="form-label">CVV</label>
+                <input class="form-input" type="text" placeholder="•••" maxlength="4" id="cardCvv"/>
+              </div>
+            </div>
+          </div>
+
+          <!-- PayPal / other placeholders -->
+          <div id="altPayForm" style="display:none;text-align:center;padding:2rem;color:var(--text-soft)">
+            <div style="font-size:3rem;margin-bottom:1rem" id="altPayIcon">🅿️</div>
+            <div style="font-family:var(--font-mono);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase">
+              Du wirst nach dem Klick weitergeleitet
+            </div>
+          </div>
+
+          <div class="secure-badge">
+            🔒 Deine Daten werden 256-bit SSL-verschlüsselt übertragen
+          </div>
+
+          <div class="checkout-nav">
+            <button class="btn-ghost" onclick="goToStep(2)" style="font-size:0.7rem;padding:0.65rem 1.5rem">← Zurück</button>
+            <button class="btn-primary" onclick="startCheckout()" id="payBtn" style="min-width:220px;justify-content:center">
+              🔒 Jetzt kaufen · <span id="payBtnTotal">—</span>
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /checkout-card -->
+    </div><!-- /left -->
+
+    <!-- RIGHT: Order Summary -->
+    <div>
+      <div class="order-summary">
+        <h3>Meine Bestellung</h3>
+        <div class="order-items" id="summaryItems">
+          <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-dim);text-align:center;padding:1.5rem 0">
+            Warenkorb wird geladen…
+          </div>
+        </div>
+        <div class="order-divider"></div>
+        <div class="summary-line">
+          <span>Zwischensumme</span>
+          <span id="sumSubtotal">—</span>
+        </div>
+        <div class="summary-line">
+          <span>Versand</span>
+          <span id="sumShipping">—</span>
+        </div>
+        <div class="summary-shipping-note" id="freeShippingNote" style="display:none">
+          🎉 Kostenloser Versand ab 50€
+        </div>
+        <div class="summary-line total">
+          <span>Gesamt</span>
+          <span id="sumTotal">—</span>
+        </div>
+
+        <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.5rem">
+          <div style="font-family:var(--font-mono);font-size:0.56rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:0.25rem">Wir akzeptieren</div>
+          <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+            <span style="background:var(--bg3);border:1px solid var(--border-soft);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.75rem">💳 Visa</span>
+            <span style="background:var(--bg3);border:1px solid var(--border-soft);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.75rem">💳 MC</span>
+            <span style="background:var(--bg3);border:1px solid var(--border-soft);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.75rem">🅿️ PayPal</span>
+            <span style="background:var(--bg3);border:1px solid var(--border-soft);border-radius:6px;padding:0.3rem 0.7rem;font-size:0.75rem">🩷 Klarna</span>
+          </div>
+        </div>
+
+        <div style="margin-top:1.25rem;font-family:var(--font-mono);font-size:0.56rem;letter-spacing:0.08em;color:var(--text-dim);line-height:1.7">
+          ✓ 30 Tage Rückgabe &nbsp;·&nbsp; ✓ Gratis Rücksendung &nbsp;·&nbsp; ✓ Käuferschutz
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /checkout-inner -->
+</section>
+
+<!-- ══ PROCESSING OVERLAY ══ -->
+<div id="processingOverlay">
+  <!-- Spinner phase -->
+  <div id="spinnerPhase">
+    <div class="process-spinner" id="spinner"></div>
+    <div class="process-label" id="processLabel">Verbindung wird hergestellt…</div>
+    <div class="process-steps" id="processSteps">
+      <div class="process-step-item" id="ps1">⏳ Zahlung wird initialisiert…</div>
+      <div class="process-step-item" id="ps2">⏳ Karte wird verifiziert…</div>
+      <div class="process-step-item" id="ps3">⏳ Bank wird kontaktiert…</div>
+      <div class="process-step-item" id="ps4">⏳ Transaktion wird bestätigt…</div>
+    </div>
+  </div>
+
+  <!-- Error phase (hidden initially) -->
+  <div id="errorState">
+    <div class="error-icon-big">❌</div>
+    <div class="error-title-big">Zahlung fehlgeschlagen</div>
+    <div class="error-desc-big">
+      Die Verbindung zur Zahlungsplattform konnte nicht hergestellt werden.
+      Bitte überprüfe deine Angaben oder versuche es mit einer anderen Zahlungsmethode.
+    </div>
+    <div class="error-code-chip">FEHLERCODE: PAYMENT_GATEWAY_TIMEOUT · ERR_3DS_AUTH_FAILED</div>
+    <div class="error-actions">
+      <button class="btn-primary" onclick="retryPayment()">↺ Erneut versuchen</button>
+      <button class="btn-ghost" onclick="closeOverlay()">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <span class="logo"><span>BTS</span> Nutrition</span>
+    <span class="logo-sub">BrewTein Sport Nutrition</span>
+    <p>Premium Sports Nutrition für ambitionierte Athleten.</p>
+  </div>
+  <div class="footer-col"><h4>Shop</h4><ul><li><a href="/">Alle Produkte</a></li><li><a href="/cart">Warenkorb</a></li></ul></div>
+  <div class="footer-col"><h4>Info</h4><ul><li><a href="/about">Über uns</a></li><li><a href="/blog">Blog</a></li></ul></div>
+  <div class="footer-col"><h4>Legal</h4><ul><li><a href="/impressum">Impressum</a></li><li><a href="/datenschutz">Datenschutz</a></li><li><a href="/agb">AGB</a></li></ul></div>
+</footer>
+<div class="footer-bottom">
+  <span>© 2025 BTS Nutrition – BrewTein Sport Nutrition GmbH</span>
+  <div class="footer-bottom-links"><a href="/impressum">Impressum</a><a href="/datenschutz">Datenschutz</a><a href="/agb">AGB</a></div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+/* ══════════════════════════════════════════
+   CHECKOUT — State & Logic
+══════════════════════════════════════════ */
+
+let currentStep = 1;
+let shippingCost = 4.99; // default standard
+let selectedPayment = 'card';
+const EMOJI_MAP = { protein:'🥛', 'pre-workout':'⚡', vitamins:'💊', recovery:'🔄' };
+
+/* ── Cart → Summary ── */
+function buildSummary() {
+  const cart = getCart();
+  const itemsEl = document.getElementById('summaryItems');
+
+  if (!cart.length) {
+    itemsEl.innerHTML = `<div style="text-align:center;padding:1.5rem 0;color:var(--text-dim);font-family:var(--font-mono);font-size:0.7rem">Warenkorb leer</div>`;
+    return;
+  }
+
+  itemsEl.innerHTML = cart.map(item => `
+    <div class="order-item">
+      <div class="order-item-img">${EMOJI_MAP[item.category] || '📦'}</div>
+      <div class="order-item-info">
+        <div class="order-item-name">${item.name}</div>
+        <div class="order-item-sub">Menge: ${item.qty}</div>
+      </div>
+      <div class="order-item-price">${(item.price * item.qty).toFixed(2).replace('.',',')}€</div>
+    </div>
+  `).join('');
+
+  updateTotals();
+}
+
+function updateTotals() {
+  const cart = getCart();
+  const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+  const autoFreeShipping = subtotal >= 50;
+  const shipping = autoFreeShipping ? 0 : shippingCost;
+  const total = subtotal + shipping;
+
+  document.getElementById('sumSubtotal').textContent = subtotal.toFixed(2).replace('.',',') + '€';
+
+  const shipEl = document.getElementById('sumShipping');
+  const noteEl = document.getElementById('freeShippingNote');
+  if (autoFreeShipping) {
+    shipEl.innerHTML = '<span class="free">Kostenlos 🎉</span>';
+    noteEl.style.display = 'block';
+  } else {
+    shipEl.textContent = shipping === 0 ? 'Kostenlos 🎉' : shipping.toFixed(2).replace('.',',') + '€';
+    noteEl.style.display = 'none';
+  }
+
+  document.getElementById('sumTotal').textContent = total.toFixed(2).replace('.',',') + '€';
+  document.getElementById('payBtnTotal').textContent = total.toFixed(2).replace('.',',') + '€';
+
+  // Update standard shipping label
+  const stdLabel = document.getElementById('priceStandard');
+  if (stdLabel) stdLabel.textContent = autoFreeShipping ? 'Kostenlos' : '4,99€';
+}
+
+/* ── Step Navigation ── */
+function goToStep(n) {
+  // Validate step 1 before proceeding
+  if (currentStep === 1 && n > 1) {
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const street = document.getElementById('street').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const plz = document.getElementById('plz').value.trim();
+
+    const missing = [];
+    if (!firstName) missing.push('firstName');
+    if (!lastName) missing.push('lastName');
+    if (!email) missing.push('email');
+    if (!street) missing.push('street');
+    if (!city) missing.push('city');
+    if (!plz) missing.push('plz');
+
+    if (missing.length) {
+      missing.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.add('error');
+          el.addEventListener('input', () => el.classList.remove('error'), { once: true });
+        }
+      });
+      showToast('⚠ Bitte alle Pflichtfelder ausfüllen');
+      return;
+    }
+
+    // Fill address preview
+    const country = document.getElementById('country').value;
+    document.getElementById('addressPreview').innerHTML =
+      `${firstName} ${lastName}<br>${street}<br>${plz} ${city}, ${country}`;
+  }
+
+  // Hide current, show next
+  document.getElementById('step' + currentStep).classList.remove('active');
+  document.getElementById('step' + n).classList.add('active');
+
+  // Update progress indicators
+  document.querySelectorAll('.progress-step').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.classList.remove('active', 'done');
+    if (s < n) el.classList.add('done');
+    else if (s === n) el.classList.add('active');
+  });
+
+  // Update step circle icons for done steps
+  document.querySelectorAll('.progress-step.done .step-circle').forEach(c => {
+    c.textContent = '✓';
+  });
+
+  currentStep = n;
+  updateTotals();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ── Shipping ── */
+function selectShipping(el, cost, type) {
+  document.querySelectorAll('.shipping-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  shippingCost = cost;
+  updateTotals();
+}
+
+/* ── Payment method ── */
+function selectPayment(btn, method) {
+  selectedPayment = method;
+  document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const cardForm = document.getElementById('cardForm');
+  const altForm = document.getElementById('altPayForm');
+  const altIcon = document.getElementById('altPayIcon');
+  const icons = { paypal:'🅿️', apple:'🍎', klarna:'🩷' };
+
+  if (method === 'card') {
+    cardForm.style.display = '';
+    altForm.style.display = 'none';
+  } else {
+    cardForm.style.display = 'none';
+    altForm.style.display = '';
+    altIcon.textContent = icons[method] || '💰';
+  }
+}
+
+/* ── Card formatting ── */
+function formatCardNumber(el) {
+  let v = el.value.replace(/\D/g,'').slice(0,16);
+  el.value = v.match(/.{1,4}/g)?.join(' ') || v;
+  // Card type icon
+  const icon = document.getElementById('cardIcon');
+  if (v.startsWith('4')) icon.textContent = '💙'; // Visa
+  else if (v.startsWith('5')) icon.textContent = '🟠'; // MC
+  else if (v.startsWith('3')) icon.textContent = '🟢'; // Amex
+  else icon.textContent = '💳';
+}
+function formatExpiry(el) {
+  let v = el.value.replace(/\D/g,'').slice(0,4);
+  if (v.length >= 2) v = v.slice(0,2) + '/' + v.slice(2);
+  el.value = v;
+}
+
+/* ══ FAKE CHECKOUT SEQUENCE ══ */
+function startCheckout() {
+  const overlay = document.getElementById('processingOverlay');
+  const spinner = document.getElementById('spinner');
+  const spinnerPhase = document.getElementById('spinnerPhase');
+  const errorState = document.getElementById('errorState');
+  const processLabel = document.getElementById('processLabel');
+
+  // Reset state
+  errorState.classList.remove('show');
+  spinnerPhase.style.display = 'flex';
+  spinnerPhase.style.flexDirection = 'column';
+  spinnerPhase.style.alignItems = 'center';
+  spinnerPhase.style.gap = '1.5rem';
+  ['ps1','ps2','ps3','ps4'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('visible','ok','fail');
+  });
+
+  overlay.classList.add('show');
+
+  // Step sequence with realistic delays
+  const steps = [
+    { id:'ps1', label:'Zahlung wird initialisiert…',      delay:600,  ok:true },
+    { id:'ps2', label:'Karte wird verifiziert…',          delay:1400, ok:true },
+    { id:'ps3', label:'Bank wird kontaktiert…',           delay:2400, ok:true },
+    { id:'ps4', label:'Transaktion wird bestätigt…',      delay:3500, ok:false }, // FAIL
+  ];
+
+  steps.forEach(({ id, label, delay, ok }) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      el.classList.add('visible');
+      processLabel.textContent = label;
+
+      if (ok) {
+        setTimeout(() => {
+          el.textContent = '✓ ' + label.replace('…','');
+          el.classList.add('ok');
+        }, 600);
+      } else {
+        // FAIL state
+        setTimeout(() => {
+          el.textContent = '✕ Verbindungsfehler – Transaktion abgebrochen';
+          el.classList.add('fail');
+
+          // Shake spinner red then hide
+          spinner.style.borderTopColor = '#c45240';
+          setTimeout(() => {
+            spinnerPhase.style.display = 'none';
+            errorState.classList.add('show');
+          }, 700);
+        }, 800);
+      }
+    }, delay);
+  });
+}
+
+function retryPayment() {
+  const overlay = document.getElementById('processingOverlay');
+  overlay.classList.remove('show');
+  // Small delay then start again
+  setTimeout(startCheckout, 300);
+}
+
+function closeOverlay() {
+  document.getElementById('processingOverlay').classList.remove('show');
+  showToast('Zahlung abgebrochen.');
+}
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  buildSummary();
+
+  // Redirect if cart is empty
+  const cart = getCart();
+  if (!cart.length) {
+    window.location.href = '/cart';
+  }
+});
+</script>
+</body>
+</html>

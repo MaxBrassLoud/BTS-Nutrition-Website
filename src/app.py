@@ -151,6 +151,9 @@ def error_500(e):
 def error_429(e):
     return render_template("errors/429.html"), 429
 
+@app.route("/checkout")
+def checkout():
+    return render_template("checkout.html")
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000, host="0.0.0.0")
