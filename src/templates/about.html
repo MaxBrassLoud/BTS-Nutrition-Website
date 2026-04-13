@@ -9,47 +9,66 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
   <style>
-    /* Team roles box styling */
+    .team-photo {
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      position: relative;
+    }
+    .team-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .team-card:hover .team-photo img {
+      transform: scale(1.04);
+    }
+    .team-photo::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 35%;
+      background: linear-gradient(to top, rgba(13, 14, 16, 0.5) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
     .team-roles-box {
       margin-top: 1rem;
       padding-top: 1rem;
       border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
-
     .team-roles-label {
       font-family: var(--font-mono);
       font-size: 0.56rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--accent);
+      color: var(--bronze);
       margin-bottom: 0.6rem;
       display: block;
     }
-
     .team-roles-list {
       display: flex;
       flex-wrap: wrap;
       gap: 0.4rem;
     }
-
     .team-role-tag {
       display: inline-block;
       padding: 0.3rem 0.65rem;
-      background: rgba(232, 255, 0, 0.08);
-      border: 1px solid rgba(232, 255, 0, 0.2);
+      background: rgba(193, 124, 58, 0.07);
+      border: 1px solid rgba(193, 124, 58, 0.2);
       border-radius: 999px;
       font-family: var(--font-mono);
-      font-size: 0.55rem;
+      font-size: 0.52rem;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--muted);
+      color: var(--text-soft);
       transition: all 0.2s;
     }
-
     .team-role-tag:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(232, 255, 0, 0.12);
+      border-color: var(--bronze);
+      color: var(--bronze);
+      background: rgba(193, 124, 58, 0.12);
     }
   </style>
 </head>
@@ -79,7 +98,6 @@
 </div>
 
 <section class="about-page">
-  <!-- Intro -->
   <div class="about-intro">
     <div class="about-intro-text fade-up">
       <div class="section-label">Unsere Mission</div>
@@ -93,7 +111,6 @@
     </div>
   </div>
 
-  <!-- Values -->
   <div style="max-width:1100px;margin:0 auto 3rem">
     <div class="section-label">Was uns antreibt</div>
     <h2 class="section-title">UNSERE WERTE</h2>
@@ -121,13 +138,15 @@
     </div>
   </div>
 
-  <!-- Team -->
   <div class="team-section">
     <div class="section-label">Die Menschen hinter BTS</div>
     <h2 class="section-title">UNSER TEAM</h2>
     <div class="team-grid">
+
       <div class="team-card fade-up" style="animation-delay:.05s">
-        <div class="team-photo">👨‍🔬</div>
+        <div class="team-photo">
+          <img src="{{ url_for('static', filename='assets/team/christian.jpg') }}" alt="Christian Bendeich"/>
+        </div>
         <div class="team-info">
           <div class="team-name">Christian Bendeich</div>
           <div class="team-role">CEO & Founder</div>
@@ -143,12 +162,15 @@
           </div>
         </div>
       </div>
+
       <div class="team-card fade-up" style="animation-delay:.1s">
-        <div class="team-photo">👩‍💼</div>
+        <div class="team-photo">
+          <img src="{{ url_for('static', filename='assets/team/ludwig.jpg') }}" alt="Ludwig Gaukler"/>
+        </div>
         <div class="team-info">
           <div class="team-name">Ludwig Gaukler</div>
-          <div class="team-role">Head of Product Development | Hoead of Finance</div>
-          <p class="team-bio">Aktiver Sportler der für Produkt entwicklung verantwortlich ist</p>
+          <div class="team-role">Head of Product Development | Head of Finance</div>
+          <p class="team-bio">Aktiver Sportler der für Produktentwicklung verantwortlich ist</p>
           <div class="team-roles-box">
             <div class="team-roles-label">Verantwortlichkeiten</div>
             <div class="team-roles-list">
@@ -160,8 +182,11 @@
           </div>
         </div>
       </div>
+
       <div class="team-card fade-up" style="animation-delay:.15s">
-        <div class="team-photo">Dev</div>
+        <div class="team-photo">
+          <img src="{{ url_for('static', filename='assets/team/maximilian.jpg') }}" alt="Maximillian Ludwig"/>
+        </div>
         <div class="team-info">
           <div class="team-name">Maximillian Ludwig</div>
           <div class="team-role">Head of Technology</div>
@@ -176,6 +201,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 </section>
